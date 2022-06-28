@@ -6,7 +6,7 @@ import (
 )
 
 func TestError_Is(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		name   string
 		err    error
 		target error
@@ -85,10 +85,10 @@ func TestError_Is(t *testing.T) {
 			want:   false,
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := errors.Is(tt.err, tt.target); got != tt.want {
-				t.Errorf("errors.Is(%v, %v) = %v, want %v", tt.err, tt.target, got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := errors.Is(tc.err, tc.target); got != tc.want {
+				t.Errorf("errors.Is(%v, %v) = %v, want %v", tc.err, tc.target, got, tc.want)
 			}
 		})
 	}
