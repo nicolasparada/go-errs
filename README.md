@@ -2,7 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/nicolasparada/go-errs.svg)](https://pkg.go.dev/github.com/nicolasparada/go-errs)
 
-Golang package to create constant sentinel errors with `errors.Is` support.
+Golang package to create constant sentinel errors.
 
 ## Install
 
@@ -26,7 +26,7 @@ const (
 )
 ```
 
-You can use `errors.Is` to check if your error is known.
+You can use `errors.As` to check if your error is of type `errs.Error` so you can extract the error kind.
 
 ```go
 package main
@@ -40,8 +40,36 @@ import (
 )
 
 func main() {
-    ok := errors.Is(myapp.ErrInvalidEmail, errs.ErrInvalidArgument)
+    var e errs.Error
+    ok := errors.As(myapp.ErrInvalidEmail, &e)
     fmt.Println(ok)
     // Output: true
+
+    ok = e.Kind() == errs.KindInvalidArgument
+    fmt.Println(ok)
+    // Output: true
+}
+```
+
+## HTTP Errors
+
+You can use the `httperrs` subpackage to quickly convert an error
+defined using this package into an HTTP status code.
+
+```go
+package main
+
+import (
+    "errors"
+    "fmt"
+
+    "myapp"
+    "github.com/nicolasparada/go-errs/httperrs"
+)
+
+func main() {
+    got := httperrs.Code(myapp.ErrInvalidEmail)
+    fmt.Println(got)
+    // Output: 422
 }
 ```

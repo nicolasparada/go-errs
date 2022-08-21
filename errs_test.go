@@ -2,93 +2,93 @@ package errs
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 )
 
-func TestError_Is(t *testing.T) {
+func ExampleError() {
+	const err = UnauthenticatedError("an unauthenticated error")
+	fmt.Println(err.Kind() == KindUnauthenticated)
+	// Output: true
+}
+
+func TestError(t *testing.T) {
 	tt := []struct {
-		name   string
-		err    error
-		target error
-		want   bool
+		name string
+		err  error
+		want Kind
 	}{
 		{
-			name:   "unauthenticated",
-			err:    UnauthenticatedError("an unauthenticated error"),
-			target: ErrUnauthenticated,
-			want:   true,
+			name: "const_unauthenticated",
+			err:  Unauthenticated,
+			want: KindUnauthenticated,
 		},
 		{
-			name:   "not_unauthenticated",
-			err:    errors.New("another unauthenticated error"),
-			target: ErrUnauthenticated,
-			want:   false,
+			name: "unauthenticated",
+			err:  UnauthenticatedError("an unauthenticated error"),
+			want: KindUnauthenticated,
 		},
 		{
-			name:   "invalid_argument",
-			err:    InvalidArgumentError("an invalid argument error"),
-			target: ErrInvalidArgument,
-			want:   true,
+			name: "const_invalid_argument",
+			err:  InvalidArgument,
+			want: KindInvalidArgument,
 		},
 		{
-			name:   "not_invalid_argument",
-			err:    errors.New("another invalid argument error"),
-			target: ErrInvalidArgument,
-			want:   false,
+			name: "invalid_argument",
+			err:  InvalidArgumentError("an invalid argument error"),
+			want: KindInvalidArgument,
 		},
 		{
-			name:   "not_found",
-			err:    NotFoundError("a not found error"),
-			target: ErrNotFound,
-			want:   true,
+			name: "const_not_found",
+			err:  NotFound,
+			want: KindNotFound,
 		},
 		{
-			name:   "not_not_found",
-			err:    errors.New("another not found error"),
-			target: ErrNotFound,
-			want:   false,
+			name: "not_found",
+			err:  NotFoundError("a not found error"),
+			want: KindNotFound,
 		},
 		{
-			name:   "conflict",
-			err:    ConflictError("a conflict error"),
-			target: ErrConflict,
-			want:   true,
+			name: "const_conflict",
+			err:  Conflict,
+			want: KindConflict,
 		},
 		{
-			name:   "not_conflict",
-			err:    errors.New("another conflict error"),
-			target: ErrConflict,
-			want:   false,
+			name: "conflict",
+			err:  ConflictError("a conflict error"),
+			want: KindConflict,
 		},
 		{
-			name:   "permission_denied",
-			err:    PermissionDeniedError("a permission denied error"),
-			target: ErrPermissionDenied,
-			want:   true,
+			name: "const_permission_denied",
+			err:  PermissionDenied,
+			want: KindPermissionDenied,
 		},
 		{
-			name:   "not_permission_denied",
-			err:    errors.New("another permission denied error"),
-			target: ErrPermissionDenied,
-			want:   false,
+			name: "permission_denied",
+			err:  PermissionDeniedError("a permission denied error"),
+			want: KindPermissionDenied,
 		},
 		{
-			name:   "gone",
-			err:    GoneError("a gone error"),
-			target: ErrGone,
-			want:   true,
+			name: "const_gone",
+			err:  Gone,
+			want: KindGone,
 		},
 		{
-			name:   "not_gone",
-			err:    errors.New("another gone error"),
-			target: ErrGone,
-			want:   false,
+			name: "gone",
+			err:  GoneError("a gone error"),
+			want: KindGone,
 		},
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := errors.Is(tc.err, tc.target); got != tc.want {
-				t.Errorf("errors.Is(%v, %v) = %v, want %v", tc.err, tc.target, got, tc.want)
+			var e Error
+			if !errors.As(tc.err, &e) {
+				t.Errorf("errors.As(%v, &e) = false, want true", tc.err)
+				return
+			}
+
+			if got := e.Kind(); got != tc.want {
+				t.Errorf("e.Kind() = %v, want %v", got, tc.want)
 			}
 		})
 	}

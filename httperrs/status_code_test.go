@@ -25,6 +25,26 @@ func TestCode(t *testing.T) {
 			want: http.StatusUnprocessableEntity,
 		},
 		{
+			name: "not_found",
+			err:  errs.NotFoundError("no such post"),
+			want: http.StatusNotFound,
+		},
+		{
+			name: "conflict",
+			err:  errs.ConflictError("post already exists"),
+			want: http.StatusConflict,
+		},
+		{
+			name: "permission_denied",
+			err:  errs.PermissionDeniedError("no permission"),
+			want: http.StatusForbidden,
+		},
+		{
+			name: "gone",
+			err:  errs.GoneError("post has been deleted"),
+			want: http.StatusGone,
+		},
+		{
 			name: "internal",
 			err:  errors.New("internal error"),
 			want: http.StatusInternalServerError,

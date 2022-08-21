@@ -1,3 +1,6 @@
+// Package httperrs exposes HTTP utilities
+// so you can quickly get an HTTP status code
+// out of an error defined in the errs package.
 package httperrs
 
 import (
@@ -14,22 +17,27 @@ func Code(err error) int {
 		return http.StatusOK
 	}
 
-	switch {
-	case errors.Is(err, errs.ErrUnauthenticated):
-		return http.StatusUnauthorized
-	case errors.Is(err, errs.ErrInvalidArgument):
-		return http.StatusUnprocessableEntity
-	case errors.Is(err, errs.ErrNotFound):
-		return http.StatusNotFound
-	case errors.Is(err, errs.ErrConflict):
-		return http.StatusConflict
-	case errors.Is(err, errs.ErrPermissionDenied):
-		return http.StatusForbidden
-	case errors.Is(err, errs.ErrGone):
-		return http.StatusGone
+	var e errs.Error
+	if !errors.As(err, &e) {
+		return http.StatusInternalServerError
 	}
 
-	return http.StatusInternalServerError
+	switch e.Kind() {
+	case errs.KindUnauthenticated:
+		return http.StatusUnauthorized
+	case errs.KindInvalidArgument:
+		return http.StatusUnprocessableEntity
+	case errs.KindNotFound:
+		return http.StatusNotFound
+	case errs.KindConflict:
+		return http.StatusConflict
+	case errs.KindPermissionDenied:
+		return http.StatusForbidden
+	case errs.KindGone:
+		return http.StatusGone
+	default:
+		return http.StatusInternalServerError
+	}
 }
 
 // IsInternalServerError reports whether err would
