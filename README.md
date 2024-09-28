@@ -26,7 +26,9 @@ const (
 )
 ```
 
-You can use `errors.As` to check if your error is of type `errs.Error` so you can extract the error kind.
+You can use `errors.Is` to check for the error group, which are exposed in the package.
+
+Or you can use `errors.As` to check if your error is of type `errs.Error` so you can extract the error kind as well.
 
 ```go
 package main
@@ -40,8 +42,12 @@ import (
 )
 
 func main() {
+    ok := errors.Is(myapp.ErrInvalidEmail, errs.InvalidArgument)
+    fmt.Println(ok)
+    // Output: true
+
     var e errs.Error
-    ok := errors.As(myapp.ErrInvalidEmail, &e)
+    ok = errors.As(myapp.ErrInvalidEmail, &e)
     fmt.Println(ok)
     // Output: true
 

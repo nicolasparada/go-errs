@@ -93,3 +93,12 @@ func TestError(t *testing.T) {
 		})
 	}
 }
+
+func TestErrorIs(t *testing.T) {
+	if !errors.Is(UnauthenticatedError("x"), Unauthenticated) {
+		t.Errorf("errors.Is(UnauthenticatedError, Unauthenticated) = false, want true")
+	}
+	if errors.Is(UnauthenticatedError("x"), NotFound) {
+		t.Errorf("errors.Is(UnauthenticatedError, NotFound) = true, want false")
+	}
+}

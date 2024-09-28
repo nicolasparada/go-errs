@@ -1,3 +1,3 @@
 module github.com/nicolasparada/go-errs
 
-go 1.20
+go 1.23
