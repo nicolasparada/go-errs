@@ -101,4 +101,12 @@ func TestErrorIs(t *testing.T) {
 	if errors.Is(UnauthenticatedError("x"), NotFound) {
 		t.Errorf("errors.Is(UnauthenticatedError, NotFound) = true, want false")
 	}
+	// only exported sentinel errors should be comparable with errors.Is, not error values of the same type.
+	if errors.Is(UnauthenticatedError("a"), UnauthenticatedError("b")) {
+		t.Errorf(`errors.Is(UnauthenticatedError("a"), UnauthenticatedError("b")) = true, want false`)
+	}
+	// but error values of the same type should be comparable with errors.Is if they are equal.
+	if !errors.Is(UnauthenticatedError("a"), UnauthenticatedError("a")) {
+		t.Errorf(`errors.Is(UnauthenticatedError("a"), UnauthenticatedError("a")) = false, want true`)
+	}
 }

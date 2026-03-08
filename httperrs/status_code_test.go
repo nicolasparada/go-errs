@@ -15,6 +15,11 @@ func TestCode(t *testing.T) {
 		want int
 	}{
 		{
+			name: "sentinel_unauthenticated",
+			err:  errs.Unauthenticated,
+			want: http.StatusUnauthorized,
+		},
+		{
 			name: "unathenticated",
 			err:  errs.UnauthenticatedError("not logged in"),
 			want: http.StatusUnauthorized,
